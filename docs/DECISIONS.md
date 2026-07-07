@@ -54,16 +54,54 @@
 - 独自ドメイン移行時: Vercel設定で301リダイレクト実装
 - README.mdに移行手順を明記
 
+### フェーズ3：ページ実装（完了）
+
+#### 完了した作業
+- ✅ jGrants API実レスポンス確認（400エラーのためモックデータで代替）
+- ✅ ETLスクリプト実装完了 (`scripts/etl/jgrants-sync.ts`)
+  - jGrants API呼び出し → エラー時モックデータフォールバック
+  - UPSERT処理・status='closed'更新
+  - sync_logsへの記録
+  - Vercel Deploy Hook発火
+- ✅ Supabaseクライアント設定 (`lib/supabase.ts`)
+- ✅ ページコンポーネント実装
+  - トップページ（`app/page.tsx`）: 募集中補助金一覧、ISR 30分
+  - 詳細ページ（`app/subsidies/[id]/page.tsx`）: SSG、ISR 24時間
+  - 運営者情報（`app/about/page.tsx`）
+  - プライバシーポリシー（`app/privacy/page.tsx`）
+  - 免責事項（`app/terms/page.tsx`）
+- ✅ データ出典表記（PDL1.0）を全ページに実装
+- ✅ Daily ETL ワークフロー作成（`.github/workflows/daily-etl.yml`）
+- ✅ README.md / SETUP.md ドキュメント整備
+
+#### 保留中の作業
+- ⏳ JSON-LD構造化データ（次回実装）
+- ⏳ XMLサイトマップ自動生成（次回実装）
+- ⏳ GA4タグ埋め込み（NEXT_PUBLIC_GA4_ID設定後）
+- ⏳ 週次SEO分析ワークフロー（GSC/GA4連携）
+- ⏳ 自動改善PR生成ワークフロー
+
+#### 技術的な課題
+
+**jGrants API 400エラー**
+- API呼び出しで常に400 Bad Requestが返される
+- 原因不明（認証不要のはずだがWAFでブロック？）
+- 対策: モックデータで開発継続、後日API仕様を再調査
+
+**Next.js 15.3.1 セキュリティ警告**
+- Vercelデプロイ時に「Vulnerable version」警告
+- package.jsonは15.3.1だが、Vercelキャッシュが原因の可能性
+- 対策: 後日Vercel側でキャッシュクリアを試す
+
+**GitHub Token workflow スコープ不足**
+- `.github/workflows/`へのpushが拒否される
+- 対策: 新しいトークン生成が必要（SETUP.mdに手順記載）
+
 ## 次のステップ
 
-### フェーズ3：ページ実装
-1. jGrants API実レスポンス確認
-2. ETLスクリプト実装 (`scripts/etl/jgrants-sync.ts`)
-3. Supabaseクライアント設定
-4. ページコンポーネント実装
-   - トップページ
-   - 詳細ページ
-   - 一覧ページ
-5. JSON-LD / OGP / サイトマップ
-6. GA4タグ埋め込み（NEXT_PUBLIC_GA4_ID使用）
-7. 運営者情報・プライバシーポリシー・免責事項ページ
+### フェーズ4：自動運用ワークフロー
+1. GitHub Token更新（workflowスコープ追加）
+2. Vercel Deploy Hook作成・設定
+3. Daily ETLワークフローの動作確認
+4. 週次SEO分析ワークフロー実装（後日）
+5. 自動改善PRワークフロー実装（後日）

@@ -35,6 +35,11 @@ export async function generateMetadata({ params }: Props) {
   return {
     title: `${subsidy.title} | 補助金ナビ`,
     description: subsidy.overview?.slice(0, 120) || subsidy.title,
+    openGraph: {
+      title: subsidy.title,
+      description: subsidy.overview || '',
+      type: 'article',
+    },
   };
 }
 
@@ -52,8 +57,28 @@ export default async function SubsidyDetail({ params }: Props) {
 
   const typedSubsidy = subsidy as Subsidy;
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'GovernmentService',
+    name: typedSubsidy.title,
+    description: typedSubsidy.overview || '',
+    provider: {
+      '@type': 'GovernmentOrganization',
+      name: typedSubsidy.organization || 'デジタル庁',
+    },
+    areaServed: typedSubsidy.region_code || '日本',
+    ...(typedSubsidy.url && { url: typedSubsidy.url }),
+    ...(typedSubsidy.deadline && {
+      validThrough: typedSubsidy.deadline,
+    }),
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <header className="bg-white shadow-sm">
         <div className="max-w-4xl mx-auto px-4 py-4">
           <Link href="/" className="text-primary hover:underline">

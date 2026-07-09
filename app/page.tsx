@@ -1,8 +1,14 @@
 import { supabase } from '@/lib/supabase';
 import type { Subsidy } from '@/lib/supabase';
+import type { Metadata } from 'next';
 import Link from 'next/link';
 
 export const revalidate = 1800; // 30分
+
+export const metadata: Metadata = {
+  title: '補助金ナビ（仮） | jGrants補助金情報検索',
+  description: 'デジタル庁jGrantsの補助金情報を検索できるサイト。募集中の補助金を一覧表示し、詳細情報を確認できます。出典：jGrants（デジタル庁）',
+};
 
 export default async function Home() {
   const { data: subsidies } = await supabase

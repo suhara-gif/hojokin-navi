@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "etl": "tsx scripts/etl/jgrants-sync.ts"
+    "etl": "tsx scripts/etl/jgrants-sync.ts",
+    "seo:analyze": "tsx scripts/seo/analyze.ts",
+    "seo:improve": "tsx scripts/seo/improve.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.47.13",
